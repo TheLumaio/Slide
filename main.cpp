@@ -6,7 +6,7 @@ using namespace std;
 
 int main()
 {
-	FreeConsole(); // Disable windows console
+	//FreeConsole(); // Disable windows console
 
 	Game game;
 	game.Start();

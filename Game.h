@@ -7,9 +7,11 @@
 
 #include <vector>
 #include <SFML/Graphics.hpp>
+#include <SFML/Audio.hpp>
 #include <Thor/Input.hpp>
 #include <Thor/Particles.hpp>
 #include <Thor/Math.hpp>
+#include <Thor/Vectors.hpp>
 #include "Graphics.h"
 #include "Enemie.h"
 
@@ -20,6 +22,13 @@ private:
 
 	Graphics *graphics;
 	sf::View camera;
+
+	sf::Texture p_texture;
+	thor::UniversalEmitter emitter;
+	thor::ParticleSystem system;
+	thor::PolarVector2f velocity;
+
+	sf::Music music;
 
 	std::vector<sf::Vector2f> lanes;
 	std::vector<Enemie> enemies;

@@ -6,4 +6,4 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/bin")
 
 set(SOURCE_FILES main.cpp)
 add_executable(Slide ${SOURCE_FILES} Game.cpp Game.h Graphics.cpp Graphics.h Enemie.h)
-target_link_libraries(Slide sfml-graphics sfml-window sfml-system thor)
+target_link_libraries(Slide sfml-graphics sfml-window sfml-audio sfml-system thor)

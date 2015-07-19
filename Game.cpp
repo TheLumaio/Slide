@@ -9,29 +9,41 @@ Game::Game()
 	sf::ContextSettings settings;
 	settings.depthBits = 0;
 	settings.stencilBits = 0;
-	settings.antialiasingLevel = 0;
+	settings.antialiasingLevel = 8;
 	settings.majorVersion = 2;
 	settings.minorVersion = 3;
 
 	window = new sf::RenderWindow(sf::VideoMode(320, 240), "Slide", sf::Style::Close, settings);
-
 	graphics = new Graphics(*window);
 
 	camera = sf::View(sf::FloatRect(0, 0, 320, 240));
-	//camera.setCenter(320/2, getCenterOfLanes());
-
 	window->setView(camera);
 
-	emap["close"] = thor::Action(sf::Event::Closed);
-	emap["add"] = thor::Action(sf::Keyboard::A, thor::Action::PressOnce);
-	emap["remove"] = thor::Action(sf::Keyboard::D, thor::Action::PressOnce);
+	p_texture.loadFromFile("particle.png");
+	emitter.setEmissionRate(100);
+	emitter.setParticleLifetime(sf::seconds(5));
+	emitter.setParticleColor(sf::Color(150, 150, 150, 100));
 
-	emap["up"] = thor::Action(sf::Keyboard::Up, thor::Action::PressOnce);
-	emap["down"] = thor::Action(sf::Keyboard::Down, thor::Action::PressOnce);
-	emap["left"] = thor::Action(sf::Keyboard::Left, thor::Action::Hold);
-	emap["right"] = thor::Action(sf::Keyboard::Right, thor::Action::Hold);
+	system.setTexture(p_texture);
+	system.addEmitter(thor::refEmitter(emitter));
+	system.addAffector( thor::TorqueAffector(100.f) );
+	system.addAffector( thor::ForceAffector(sf::Vector2f(0.f, 100.f)) );
 
-	emap["reset"] = thor::Action(sf::Keyboard::R, thor::Action::PressOnce);
+	velocity = thor::PolarVector2f(0, -90);
+
+	music.openFromFile("track.ogg");
+	music.setVolume(25);
+	music.setLoop(true);
+	music.play();
+
+	emap["close"]  = thor::Action(sf::Event::Closed);
+	emap["add"] 	 = thor::Action(sf::Keyboard::A,     thor::Action::PressOnce);
+	emap["remove"] = thor::Action(sf::Keyboard::D,     thor::Action::PressOnce);
+	emap["up"] 		 = thor::Action(sf::Keyboard::Up,    thor::Action::PressOnce);
+	emap["down"]   = thor::Action(sf::Keyboard::Down,  thor::Action::PressOnce);
+	emap["left"]   = thor::Action(sf::Keyboard::Left,  thor::Action::Hold);
+	emap["right"]  = thor::Action(sf::Keyboard::Right, thor::Action::Hold);
+	emap["reset"]  = thor::Action(sf::Keyboard::R,     thor::Action::PressOnce);
 
 	lanes.emplace_back(sf::Vector2f(0, 30));
 	lanes.emplace_back(sf::Vector2f(0, 50));
@@ -113,7 +125,6 @@ void Game::Update(float dt)
 		Enemie &e = enemies[i];
 
 		// Player death
-		std::cout << player.y << " " << e.y << std::endl;
 		if (e.y == player.y)
 		{
 			if (e.x+10 > player.x && e.x < player.x+10) {
@@ -149,6 +160,8 @@ void Game::Update(float dt)
 void Game::Render(float dt)
 {
 	graphics->ClearColor(sf::Color::Black);
+
+	window->draw(system);
 
 	graphics->Print(0, 0, "SCORE: " + std::to_string(score));
 	graphics->Print(100, 0, "DIFF: " + std::to_string(diff));
@@ -195,6 +208,14 @@ void Game::Start()
 
 		sf::Time timer = clock.restart();
 		float dt = timer.asSeconds();
+
+		system.update(timer);
+
+		velocity.r = rand()%360;
+		velocity.phi+=0.1;
+
+		emitter.setParticlePosition(sf::Vector2f(player.x+5, lanes[player.y].y));
+		emitter.setParticleVelocity(thor::Distributions::deflect(velocity, rand()%255));
 
 		emap.update(*window);
 		if (emap.isActive("close"))
