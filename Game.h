@@ -36,7 +36,7 @@ private:
 	std::vector<std::string> sayings = {
 					"OH YEAH",
 					"YOU GOT IT",
-					"CCCCCOMBOOO",
+					"C-C-C-COMBOOO",
 					"UNSTOPPABLE",
 					"WOW",
 					"HOLY SHIT",
@@ -64,8 +64,6 @@ private:
 
 	float diff = 1;
 	float spawn_timer = 0;
-
-	int to_spawn = 1;
 
 	int score = 0;
 	int combo = 0;

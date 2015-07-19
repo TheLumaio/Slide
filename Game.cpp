@@ -49,8 +49,6 @@ Game::Game()
 	lanes.emplace_back(sf::Vector2f(0, 50));
 	lanes.emplace_back(sf::Vector2f(0, 70));
 
-	enemies.emplace_back(Enemie(0, 1, 1));
-
 	player.x = 320/2-5;
 	player.y = 1;
 }
@@ -63,6 +61,7 @@ void Game::Update(float dt)
 	camera.setRotation((float)sin(sine_timer)*10);
 	window->setView(camera);
 
+	// Retry
 	if (dead) {
 		if (emap.isActive("reset"))
 		{
@@ -79,13 +78,7 @@ void Game::Update(float dt)
 		return;
 	}
 
-	/* Just for debugging
-	if (emap.isActive("add"))
-		lanes.emplace_back(sf::Vector2f(0, lanes[lanes.size()-1].y+20));
-	if (emap.isActive("remove"))
-		lanes.pop_back();
-	*/
-
+	// Movement
 	if (emap.isActive("up") && player.y > 0)
 		player.y--;
 	if (emap.isActive("down") && player.y < lanes.size()-1)
@@ -95,7 +88,7 @@ void Game::Update(float dt)
 	if (emap.isActive("right"))
 		player.x+=100*dt;
 
-	// Add enemies
+	// Add enemies ---------- This is bad, I might fix it later
 	spawn_timer += dt;
 	if (spawn_timer > diff)
 	{
@@ -141,13 +134,9 @@ void Game::Update(float dt)
 			score++;
 		}
 
-		diff -= 0.000005;
-		if (diff < 0.25)
-		{
-			//lanes.emplace_back(sf::Vector2f(0, lanes[lanes.size()-1].y+20));
-			diff = 1;
-			to_spawn++;
-		}
+		// Speed up after a while
+		if (diff > 0.25)
+			diff -= 0.000005;
 
 		// Update position
 		if (e.flag==1)
@@ -161,35 +150,35 @@ void Game::Render(float dt)
 {
 	graphics->ClearColor(sf::Color::Black);
 
+	// Particles
 	window->draw(system);
 
+	// Display score
 	graphics->Print(0, 0, "SCORE: " + std::to_string(score));
-	graphics->Print(100, 0, "DIFF: " + std::to_string(diff));
 
 	// Lanes
 	for (sf::Vector2f &lane : lanes)
 		graphics->Rectangle(lane.x, lane.y, 320, 2);
 
 	// Enemies
-	for (int i = 0; i < enemies.size(); i++)
-	{
-		Enemie &e = enemies[i];
+	for (Enemie &e : enemies)
 		graphics->Rectangle(e.x, lanes[e.y].y-5, 10, 10, sf::Color::Red);
-	}
 
 	// Player
 	graphics->Rectangle(player.x, lanes[player.y].y-5, 10, 10, sf::Color::Green);
 
+	// Score messages
 	if (score % 20 == 0 && score > 0) {
 		saying_timer = 3;
 		current_saying = rand()%sayings.size();
 	}
-
 	if (saying_timer > 0) {
 		saying_timer -= dt;
 		graphics->Print(50, 100, sayings[current_saying], 24, sf::Color(rand()%255, rand()%255, rand()%255));
 	}
 
+
+	// Dead
 	if (dead) {
 		graphics->Rectangle(0, 0, 320, 240, sf::Color(0, 0, 0, 200));
 		graphics->Print(20, -20, "DEAD", 100);
