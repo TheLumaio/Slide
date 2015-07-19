@@ -14,6 +14,7 @@ int main()
 	#endif
 
 	Game game;
+	game.loadScore();
 	game.Start();
 
 	cout << "Hello, World!" << endl;

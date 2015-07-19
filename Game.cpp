@@ -78,6 +78,10 @@ void Game::Update(float dt)
 		return;
 	}
 
+	// Update score
+	if (score > high)
+		high = score;
+
 	// Movement
 	if (emap.isActive("up") && player.y > 0)
 		player.y--;
@@ -122,6 +126,7 @@ void Game::Update(float dt)
 		{
 			if (e.x+10 > player.x && e.x < player.x+10) {
 				current_saying_dead = rand()%dead_sayings.size();
+				saveScore();
 				dead = true;
 			}
 		}
@@ -154,7 +159,8 @@ void Game::Render(float dt)
 	window->draw(system);
 
 	// Display score
-	graphics->Print(0, 0, "SCORE: " + std::to_string(score));
+	graphics->Print(50, 0, "SCORE: " + std::to_string(score));
+	graphics->Print(150, 0, "BEST: " + std::to_string(high));
 
 	// Lanes
 	for (sf::Vector2f &lane : lanes)
@@ -216,4 +222,29 @@ void Game::Start()
 		window->display();
 
 	}
+}
+
+bool Game::fileExists(const std::string& filename)
+{
+	struct stat buf;
+	return stat(filename.c_str(), &buf) != -1;
+}
+
+void Game::loadScore()
+{
+	if (!fileExists("score")) return;
+	std::string hsc;
+	std::ifstream file;
+	file.open("score");
+	file >> hsc;
+	file.close();
+	high = std::stoi(hsc);
+}
+
+void Game::saveScore()
+{
+	std::ofstream file;
+	file.open("score");
+	file << high;
+	file.close();
 }

@@ -6,6 +6,9 @@
 #define SLIDE_GAME_H
 
 #include <vector>
+#include <fstream>
+#include <sys/stat.h>
+
 #include <SFML/Graphics.hpp>
 #include <SFML/Audio.hpp>
 #include <Thor/Input.hpp>
@@ -66,7 +69,7 @@ private:
 	float spawn_timer = 0;
 
 	int score = 0;
-	int combo = 0;
+	int high = 0;
 
 	bool dead = false;
 
@@ -87,6 +90,10 @@ public:
 	void Render(float dt);
 
 	void Start();
+
+	void saveScore();
+	void loadScore();
+	bool fileExists(const std::string& filename);
 
 };
 
