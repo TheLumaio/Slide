@@ -117,6 +117,7 @@ void Game::Update(float dt)
 		if (e.y == player.y)
 		{
 			if (e.x+10 > player.x && e.x < player.x+10) {
+				current_saying_dead = rand()%dead_sayings.size();
 				dead = true;
 			}
 		}
@@ -164,12 +165,23 @@ void Game::Render(float dt)
 	}
 
 	// Player
-	graphics->Rectangle(player.x, lanes[player.y].y-5, 10, 10, sf::Color(rand()%255,rand()%255,rand()%255));
+	graphics->Rectangle(player.x, lanes[player.y].y-5, 10, 10, sf::Color::Green);
+
+	if (score % 20 == 0 && score > 0) {
+		saying_timer = 3;
+		current_saying = rand()%sayings.size();
+	}
+
+	if (saying_timer > 0) {
+		saying_timer -= dt;
+		graphics->Print(50, 100, sayings[current_saying], 24, sf::Color(rand()%255, rand()%255, rand()%255));
+	}
 
 	if (dead) {
 		graphics->Rectangle(0, 0, 320, 240, sf::Color(0, 0, 0, 200));
 		graphics->Print(20, -20, "DEAD", 100);
 		graphics->Print(50, -50, "R to restart", 30);
+		graphics->Print(50, 100, dead_sayings[current_saying_dead], 24, sf::Color(rand()%255, rand()%255, rand()%255));
 	}
 
 }

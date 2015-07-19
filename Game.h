@@ -24,6 +24,31 @@ private:
 	std::vector<sf::Vector2f> lanes;
 	std::vector<Enemie> enemies;
 
+	std::vector<std::string> sayings = {
+					"OH YEAH",
+					"YOU GOT IT",
+					"CCCCCOMBOOO",
+					"UNSTOPPABLE",
+					"WOW",
+					"HOLY SHIT",
+					"RIP MY BRAIN"
+	};
+
+	std::vector<std::string> dead_sayings = {
+					"YOU SUCK",
+					"GET OUT",
+					"LOSER",
+					"GET GOOD",
+					"FUCK YOU",
+					"KEEP CRYING",
+					"GO HOME",
+					"KILL YOURSELF"
+	};
+
+	float saying_timer = 0;
+	int current_saying = 0;
+	int current_saying_dead = 0;
+
 	sf::Vector2f player;
 
 	float sine_timer = 0;
@@ -34,6 +59,7 @@ private:
 	int to_spawn = 1;
 
 	int score = 0;
+	int combo = 0;
 
 	bool dead = false;
 
