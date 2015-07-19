@@ -17,3 +17,6 @@ Screenshot
 
 ###Dead screen:
 ![Dead](http://i.imgur.com/kYvh0QR.png)
+
+###Here's a GIF (with a hard 'G' you fucks)
+![GIF](http://i.imgur.com/Viv9f3R.gif)
