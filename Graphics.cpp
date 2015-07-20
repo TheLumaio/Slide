@@ -8,10 +8,10 @@ Graphics::Graphics(sf::RenderWindow &w)
 {
 	this->window = &w;
 
-	if (_font.loadFromFile("arial.ttf"))
+	if (_font.loadFromFile("res/font.ttf"))
 		_text.setFont(_font);
 	else
-		std::cout << "Error loading \"arial.ttf\"" << std::endl;
+		std::cout << "Error loading \"font.ttf\"" << std::endl;
 
 	_rect.setSize(sf::Vector2f(0, 0));
 	_circle.setRadius(0);

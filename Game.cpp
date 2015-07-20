@@ -9,7 +9,7 @@ Game::Game()
 	sf::ContextSettings settings;
 	settings.depthBits = 0;
 	settings.stencilBits = 0;
-	settings.antialiasingLevel = 8;
+	settings.antialiasingLevel = 0;
 	settings.majorVersion = 2;
 	settings.minorVersion = 3;
 
@@ -19,7 +19,7 @@ Game::Game()
 	camera = sf::View(sf::FloatRect(0, 0, 320, 240));
 	window->setView(camera);
 
-	p_texture.loadFromFile("particle.png");
+	p_texture.loadFromFile("res/particle.png");
 	emitter.setEmissionRate(100);
 	emitter.setParticleLifetime(sf::seconds(5));
 	emitter.setParticleColor(sf::Color(150, 150, 150, 100));
@@ -31,7 +31,7 @@ Game::Game()
 
 	velocity = thor::PolarVector2f(0, -90);
 
-	music.openFromFile("track.ogg");
+	music.openFromFile("res/track.ogg");
 	music.setVolume(25);
 	music.setLoop(true);
 	music.play();
@@ -185,8 +185,8 @@ void Game::Render(float dt)
 	if (saying_timer > 0) {
 		saying_timer -= dt;
 
-		graphics->Print(50+rand2(5), 100+rand2(5), sayings[current_saying], 24, sf::Color(rand()%255, rand()%255, rand()%255));
-		graphics->Print(50+rand2(5), 100+rand2(5), sayings[current_saying], 24, sf::Color(rand()%255, rand()%255, rand()%255));
+		graphics->Print(50+rand2(3), 100+rand2(3), sayings[current_saying], 24, sf::Color(rand()%255, rand()%255, rand()%255));
+		graphics->Print(50+rand2(3), 100+rand2(3), sayings[current_saying], 24, sf::Color(rand()%255, rand()%255, rand()%255));
 	}
 
 
@@ -196,8 +196,8 @@ void Game::Render(float dt)
 		graphics->Print(20, -20, "DEAD", 100);
 		graphics->Print(50, -50, "R to restart", 30);
 
-		graphics->Print(50+rand2(5), 100+rand2(5), dead_sayings[current_saying_dead], 24, sf::Color(rand()%255, rand()%255, rand()%255));
-		graphics->Print(50+rand2(5), 100+rand2(5), dead_sayings[current_saying_dead], 24, sf::Color(rand()%255, rand()%255, rand()%255));
+		graphics->Print(50+rand2(3), 100+rand2(3), dead_sayings[current_saying_dead], 24, sf::Color(rand()%255, rand()%255, rand()%255));
+		graphics->Print(50+rand2(3), 100+rand2(3), dead_sayings[current_saying_dead], 24, sf::Color(rand()%255, rand()%255, rand()%255));
 	}
 
 }
