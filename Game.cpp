@@ -127,6 +127,8 @@ void Game::Update(float dt)
 			if (e.x+10 > player.x && e.x < player.x+10) {
 				current_saying_dead = rand()%dead_sayings.size();
 				saveScore();
+				saying_timer = 0;
+				current_saying = 0;
 				dead = true;
 			}
 		}
@@ -158,6 +160,8 @@ void Game::Render(float dt)
 	// Particles
 	window->draw(system);
 
+	graphics->Rectangle(0,15, 320, 75, sf::Color(0, 0, 0, 200));
+
 	// Display score
 	graphics->Print(50, 0, "SCORE: " + std::to_string(score));
 	graphics->Print(150, 0, "BEST: " + std::to_string(high));
@@ -180,7 +184,9 @@ void Game::Render(float dt)
 	}
 	if (saying_timer > 0) {
 		saying_timer -= dt;
-		graphics->Print(50, 100, sayings[current_saying], 24, sf::Color(rand()%255, rand()%255, rand()%255));
+
+		graphics->Print(50+rand2(5), 100+rand2(5), sayings[current_saying], 24, sf::Color(rand()%255, rand()%255, rand()%255));
+		graphics->Print(50+rand2(5), 100+rand2(5), sayings[current_saying], 24, sf::Color(rand()%255, rand()%255, rand()%255));
 	}
 
 
@@ -189,7 +195,9 @@ void Game::Render(float dt)
 		graphics->Rectangle(0, 0, 320, 240, sf::Color(0, 0, 0, 200));
 		graphics->Print(20, -20, "DEAD", 100);
 		graphics->Print(50, -50, "R to restart", 30);
-		graphics->Print(50, 100, dead_sayings[current_saying_dead], 24, sf::Color(rand()%255, rand()%255, rand()%255));
+
+		graphics->Print(50+rand2(5), 100+rand2(5), dead_sayings[current_saying_dead], 24, sf::Color(rand()%255, rand()%255, rand()%255));
+		graphics->Print(50+rand2(5), 100+rand2(5), dead_sayings[current_saying_dead], 24, sf::Color(rand()%255, rand()%255, rand()%255));
 	}
 
 }
@@ -211,6 +219,9 @@ void Game::Start()
 
 		emitter.setParticlePosition(sf::Vector2f(player.x+5, lanes[player.y].y));
 		emitter.setParticleVelocity(thor::Distributions::deflect(velocity, rand()%255));
+
+		float color = rand()%255;
+		emitter.setParticleColor(sf::Color(color, color, color));
 
 		emap.update(*window);
 		if (emap.isActive("close"))
@@ -247,4 +258,9 @@ void Game::saveScore()
 	file.open("score");
 	file << high;
 	file.close();
+}
+
+float Game::rand2(float offset)
+{
+	return -offset+(offset*2)*((float)rand())/RAND_MAX;
 }

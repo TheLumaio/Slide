@@ -95,6 +95,8 @@ public:
 	void loadScore();
 	bool fileExists(const std::string& filename);
 
+	float rand2(float offset);
+
 };
 
 
