@@ -37,13 +37,14 @@ Game::Game()
 	music.play();
 
 	emap["close"]  = thor::Action(sf::Event::Closed);
-	emap["add"] 	 = thor::Action(sf::Keyboard::A,     thor::Action::PressOnce);
-	emap["remove"] = thor::Action(sf::Keyboard::D,     thor::Action::PressOnce);
-	emap["up"] 		 = thor::Action(sf::Keyboard::Up,    thor::Action::PressOnce);
-	emap["down"]   = thor::Action(sf::Keyboard::Down,  thor::Action::PressOnce);
-	emap["left"]   = thor::Action(sf::Keyboard::Left,  thor::Action::Hold);
-	emap["right"]  = thor::Action(sf::Keyboard::Right, thor::Action::Hold);
-	emap["reset"]  = thor::Action(sf::Keyboard::R,     thor::Action::PressOnce);
+	emap["add"] 	 = thor::Action(sf::Keyboard::A,      thor::Action::PressOnce);
+	emap["remove"] = thor::Action(sf::Keyboard::D,      thor::Action::PressOnce);
+	emap["up"] 		 = thor::Action(sf::Keyboard::Up,     thor::Action::PressOnce);
+	emap["down"]   = thor::Action(sf::Keyboard::Down,   thor::Action::PressOnce);
+	emap["left"]   = thor::Action(sf::Keyboard::Left,   thor::Action::Hold);
+	emap["right"]  = thor::Action(sf::Keyboard::Right,  thor::Action::Hold);
+	emap["reset"]  = thor::Action(sf::Keyboard::R,      thor::Action::PressOnce);
+	emap["menu"]	 = thor::Action(sf::Keyboard::Escape, thor::Action::PressOnce);
 
 	lanes.emplace_back(sf::Vector2f(0, 30));
 	lanes.emplace_back(sf::Vector2f(0, 50));
@@ -51,6 +52,11 @@ Game::Game()
 
 	player.x = 320/2-5;
 	player.y = 1;
+
+	current_saying_menu = rand()%menu_sayings.size();
+
+	newhighscore = false;
+
 }
 
 void Game::Update(float dt)
@@ -62,7 +68,7 @@ void Game::Update(float dt)
 	window->setView(camera);
 
 	// Retry
-	if (dead) {
+	if (dead || menu) {
 		if (emap.isActive("reset"))
 		{
 			player.y = 0;
@@ -74,13 +80,30 @@ void Game::Update(float dt)
 			spawn_timer = 0;
 			diff = 1;
 			dead = false;
+			menu = false;
+		}
+		if (emap.isActive("menu") && !menu)
+		{
+			menu = true;
+			player.y = 1;
+			player.x = 320/2-5;
+			enemies.clear();
+			score = 0;
+			spawn_timer = 0;
+			diff = 1;
+			dead = false;
+			menu = true;
+			current_saying_menu = rand()%menu_sayings.size();
 		}
 		return;
 	}
 
 	// Update score
 	if (score > high)
+	{
 		high = score;
+		newhighscore = true;
+	}
 
 	// Movement
 	if (emap.isActive("up") && player.y > 0)
@@ -130,6 +153,7 @@ void Game::Update(float dt)
 				saying_timer = 0;
 				current_saying = 0;
 				dead = true;
+				newhighscore = false;
 			}
 		}
 
@@ -189,15 +213,28 @@ void Game::Render(float dt)
 		graphics->Print(50+rand2(3), 100+rand2(3), sayings[current_saying], 24, sf::Color(rand()%255, rand()%255, rand()%255));
 	}
 
+	if (newhighscore)
+	{
+		graphics->Print(50+rand2(3), -20+rand2(3), "HIGHSCORE", 24, sf::Color(rand()%255, rand()%255, rand()%255));
+		graphics->Print(50+rand2(3), -20+rand2(3), "HIGHSCORE", 24, sf::Color(rand()%255, rand()%255, rand()%255));
+	}
 
 	// Dead
 	if (dead) {
-		graphics->Rectangle(0, 0, 320, 240, sf::Color(0, 0, 0, 200));
+		graphics->Rectangle(-50, -240, 370, 240*2, sf::Color(0, 0, 0, 200));
 		graphics->Print(20, -20, "DEAD", 100);
 		graphics->Print(50, -50, "R to restart", 30);
+		graphics->Print(50, -20, "ESCAPE for menu");
 
 		graphics->Print(50+rand2(3), 100+rand2(3), dead_sayings[current_saying_dead], 24, sf::Color(rand()%255, rand()%255, rand()%255));
 		graphics->Print(50+rand2(3), 100+rand2(3), dead_sayings[current_saying_dead], 24, sf::Color(rand()%255, rand()%255, rand()%255));
+	} else if (menu) {
+		graphics->Rectangle(-50, -240, 370, 240*2, sf::Color(0, 0, 0, 200));
+		graphics->Print(20, -20, "SLIDE", 100);
+		graphics->Print(50, -50, "R to start", 30);
+
+		graphics->Print(50+rand2(3), 100+rand2(3), menu_sayings[current_saying_menu], 24, sf::Color(rand()%255, rand()%255, rand()%255));
+		graphics->Print(50+rand2(3), 100+rand2(3), menu_sayings[current_saying_menu], 24, sf::Color(rand()%255, rand()%255, rand()%255));
 	}
 
 }
@@ -220,8 +257,11 @@ void Game::Start()
 		emitter.setParticlePosition(sf::Vector2f(player.x+5, lanes[player.y].y));
 		emitter.setParticleVelocity(thor::Distributions::deflect(velocity, rand()%255));
 
-		float color = rand()%255;
-		emitter.setParticleColor(sf::Color(color, color, color));
+		float color = rand() % 255;
+		if (newhighscore)
+			emitter.setParticleColor(sf::Color(rand()%255, rand()%255, rand()%255));
+		else
+			emitter.setParticleColor(sf::Color(color, color, color));
 
 		emap.update(*window);
 		if (emap.isActive("close"))

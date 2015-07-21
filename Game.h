@@ -57,9 +57,19 @@ private:
 					"KILL YOURSELF"
 	};
 
+	std::vector<std::string> menu_sayings = {
+					"BEST GAME",
+					"10/10",
+					"YOU WILL LOSE",
+					"NO ONE CAN SAVE YOU",
+					"GOOD LUCK",
+					"CAN'T BEAT ME"
+	};
+
 	float saying_timer = 0;
 	int current_saying = 0;
 	int current_saying_dead = 0;
+	int current_saying_menu = 0;
 
 	sf::Vector2f player;
 
@@ -72,6 +82,9 @@ private:
 	int high = 0;
 
 	bool dead = false;
+	bool menu = true;
+
+	bool newhighscore = false;
 
 	float getCenterOfLanes() {
 		int middle = lanes.size()/2-1;
